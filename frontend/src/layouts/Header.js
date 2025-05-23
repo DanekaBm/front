@@ -1,7 +1,7 @@
 // src/layouts/Header.js
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import ThemeSwitcher from '../components/ThemeSwitcher';
@@ -25,7 +25,11 @@ const Header = () => {
                             <li><button onClick={logout} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '1rem' }}>{t('logout')}</button></li>
                         </>
                     ) : (
-                        <li><Link to="/login" style={{ color: 'inherit', textDecoration: 'none' }}>{t('login')}</Link></li>
+                        <>
+                            <li><Link to="/register" style={{ color: 'inherit', textDecoration: 'none' }}>{t('register')}</Link></li>
+                            <li><Link to="/login" style={{ color: 'inherit', textDecoration: 'none' }}>{t('login')}</Link></li>
+                            <li><Link to="/forgot-password" style={{ color: 'inherit', textDecoration: 'none' }}>{t('forgot_password')}</Link></li>
+                        </>
                     )}
                 </ul>
             </nav>

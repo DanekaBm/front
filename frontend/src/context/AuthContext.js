@@ -1,4 +1,3 @@
-// frontend/src/context/AuthContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import API from '../api'; // Импортируем настроенный Axios
 
@@ -16,6 +15,9 @@ export const AuthProvider = ({ children }) => {
         }
         setLoading(false);
     }, []);
+
+    // Добавляем isAdmin для удобства
+    const isAdmin = user?.role === 'admin';
 
     const login = async (email, password) => {
         try {
@@ -47,12 +49,50 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('user'); // Удаляем данные пользователя из localStorage
     };
 
+    // НОВЫЕ ФУНКЦИИ ДЛЯ СБРОСА ПАРОЛЯ
+    const forgotPassword = async (email) => {
+        try {
+            const res = await API.post('/auth/forgot-password', { email });
+            return res.data.message; // Возвращаем сообщение об успехе
+        } catch (error) {
+            console.error('Forgot password failed:', error.response?.data?.message || error.message);
+            throw new Error(error.response?.data?.message || 'Ошибка запроса сброса пароля');
+        }
+    };
+
+    const resetPassword = async (token, newPassword) => {
+        try {
+            const res = await API.put(`/auth/reset-password/${token}`, { password: newPassword });
+            return res.data.message; // Возвращаем сообщение об успехе
+        } catch (error) {
+            console.error('Reset password failed:', error.response?.data?.message || error.message);
+            throw new Error(error.response?.data?.message || 'Ошибка сброса пароля');
+        }
+    };
+
+    // ВОЗВРАЩЕННАЯ ФУНКЦИЯ ДЛЯ ОБНОВЛЕНИЯ ПАРОЛЯ АВТОРИЗОВАННОГО ПОЛЬЗОВАТЕЛЯ
+    const updatePassword = async (oldPassword, newPassword) => {
+        try {
+            // Этот маршрут находится в auth.js (PUT /api/auth/update-password)
+            const res = await API.put('/auth/update-password', { oldPassword, newPassword });
+            return res.data.message; // Возвращаем сообщение об успехе
+        } catch (error) {
+            console.error('Update password failed:', error.response?.data?.message || error.message);
+            throw new Error(error.response?.data?.message || 'Ошибка обновления пароля');
+        }
+    };
+
+
     const value = {
         user,
         loading,
+        isAdmin,
         login,
         register,
         logout,
+        forgotPassword,
+        resetPassword,
+        updatePassword, // ВОЗВРАЩЕНО
     };
 
     return (
